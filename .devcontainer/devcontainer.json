@@ -1,6 +1,10 @@
 {
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
 	"features": {
 		"ghcr.io/devcontainers-extra/features/aws-cdk:2": {}
+	},
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"secrets": {
+		"AWS_ACCESS_KEY_ID": {},
+		"AWS_SECRET_ACCESS_KEY": {}
 	}
 }
