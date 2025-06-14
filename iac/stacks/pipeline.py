@@ -25,7 +25,7 @@ class Pipeline(cdk.Stack):
 
         cdk.pipelines.CodePipeline(
             self,
-            "Pipeline",
+            f"{construct_id}Pipeline",
             pipeline_name=pipeline_name,
             synth=cdk.pipelines.ShellStep(
                 "Synthesise",
