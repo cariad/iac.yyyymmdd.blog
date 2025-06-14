@@ -7,12 +7,18 @@ from constructs import Construct
 class Pipeline(cdk.Stack):
     """
     Build and deployment pipeline.
+
+    Args:
+        scope: Scope.
+        construct_id: Construct ID.
+        pipeline_name: Pipeline name.
     """
 
     def __init__(
         self,
         scope: Construct,
         construct_id: str,
+        pipeline_name: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -20,7 +26,7 @@ class Pipeline(cdk.Stack):
         cdk.pipelines.CodePipeline(
             self,
             "Pipeline",
-            pipeline_name="yyyymmddblog",
+            pipeline_name=pipeline_name,
             synth=cdk.pipelines.ShellStep(
                 "Synthesise",
                 commands=[

@@ -13,8 +13,9 @@ local_environment = cdk.Environment(
 
 stacks.Pipeline(
     app,
-    "yyyymmddblog-pipeline",
+    "yyyymmddblog",
     env=local_environment,
+    pipeline_name="yyyymmddblog",
 )
 
 app.synth()
