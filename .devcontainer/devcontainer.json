@@ -17,6 +17,7 @@
 	"postCreateCommand": "pip3 install -r requirements.txt && pip3 install -r requirements-dev.txt",
 	"secrets": {
 		"AWS_ACCESS_KEY_ID": {},
+		"AWS_ACCOUNT_ID": {},
 		"AWS_SECRET_ACCESS_KEY": {}
 	}
 }
