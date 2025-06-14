@@ -13,8 +13,6 @@ class Pipeline(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
-        domain_name: str,
-        github_repository: str,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -22,7 +20,7 @@ class Pipeline(cdk.Stack):
         cdk.pipelines.CodePipeline(
             self,
             "Pipeline",
-            pipeline_name=domain_name,
+            pipeline_name="yyyymmddblog",
             synth=cdk.pipelines.ShellStep(
                 "Synthesise",
                 commands=[
@@ -31,7 +29,7 @@ class Pipeline(cdk.Stack):
                     "cdk synth",
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
-                    github_repository,
+                    "cariad/iac.yyyymmdd.blog",
                     "main",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),

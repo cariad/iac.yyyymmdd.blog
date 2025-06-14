@@ -8,15 +8,13 @@ app = cdk.App()
 
 local_environment = cdk.Environment(
     account=environ["AWS_ACCOUNT_ID"],
-    region=app.node.get_context("@iac/region"),
+    region="eu-west-1",
 )
 
 stacks.Pipeline(
     app,
-    "Pipeline",
-    domain_name=app.node.get_context("@iac/domain-name"),
+    "yyyymmddblog-pipeline",
     env=local_environment,
-    github_repository=app.node.get_context("@iac/github-repository"),
 )
 
 app.synth()
