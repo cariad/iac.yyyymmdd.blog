@@ -6,12 +6,7 @@ from iac import stacks
 
 @fixture
 def template(app: cdk.App) -> cdk.assertions.Template:
-    stack = stacks.Pipeline(
-        app,
-        "Pipeline",
-        domain_name="robert.pringles",
-        github_repository="cariad/robert.pringles",
-    )
+    stack = stacks.Pipeline(app, "Pipeline")
 
     return cdk.assertions.Template.from_stack(stack)
 
