@@ -61,6 +61,10 @@ class Pipeline(cdk.Stack):
             )
         )
 
+        pipeline.add_stage(
+            stages.RegionalHosting(self, f"{construct_id}-RegionalHosting")
+        )
+
         pipeline.build_pipeline()
 
         pipeline.synth_project.add_to_role_policy(
