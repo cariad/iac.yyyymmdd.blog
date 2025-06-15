@@ -60,7 +60,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "main",
+                    "share-certificate",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
@@ -69,23 +69,24 @@ class Pipeline(cdk.Stack):
         if not env.account:
             raise ValueError("Pipeline `env` must have an explicit account")
 
-        pipeline.add_stage(
-            stages.GlobalBootstrap(
-                self,
-                f"{construct_id}-GlobalBootstrap",
-                account=env.account,
-                domain_name=domain_name,
-            )
+        bootstrap_stage = stages.GlobalBootstrap(
+            self,
+            f"{construct_id}-GlobalBootstrap",
+            account=env.account,
+            certificate_parameter_name=certificate_parameter_name,
+            domain_name=domain_name,
         )
 
-        pipeline.add_stage(
-            stages.RegionalHosting(
-                self,
-                f"{construct_id}-RegionalHosting",
-                certificate_arn=certificate_arn,
-                domain_name=domain_name,
-            )
+        pipeline.add_stage(bootstrap_stage)
+
+        regional_hosting_stage = stages.RegionalHosting(
+            self,
+            f"{construct_id}-RegionalHosting",
+            certificate_arn=certificate_arn,
+            domain_name=domain_name,
         )
+
+        pipeline.add_stage(regional_hosting_stage)
 
         pipeline.build_pipeline()
 

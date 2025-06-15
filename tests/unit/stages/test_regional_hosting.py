@@ -9,6 +9,7 @@ def stage(app: cdk.App) -> stages.RegionalHosting:
     return stages.RegionalHosting(
         app,
         "RegionalHosting",
+        certificate_parameter_name="/pringles/certificate",
         domain_name="robert.pringles",
     )
 

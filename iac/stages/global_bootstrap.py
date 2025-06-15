@@ -17,6 +17,8 @@ class GlobalBootstrap(cdk.Stage):
         scope: Scope.
         construct_id: Construct ID.
         account: Amazon Web Services account ID.
+        certificate_parameter_name: Name of the Systems Manager Parameter to
+            record the certificate ARN in.
         domain_name: Domain name.
     """
 
@@ -25,6 +27,7 @@ class GlobalBootstrap(cdk.Stage):
         scope: Construct,
         construct_id: str,
         account: str,
+        certificate_parameter_name: str,
         domain_name: str,
         **kwargs: Any,
     ) -> None:
@@ -43,5 +46,6 @@ class GlobalBootstrap(cdk.Stage):
         stacks.Certificate(
             self,
             "CertificateStack",
+            certificate_parameter_name=certificate_parameter_name,
             domain_name=domain_name,
         )
