@@ -1,5 +1,3 @@
-from typing import Any
-
 import aws_cdk as cdk
 from pytest import fixture, mark
 
@@ -64,20 +62,16 @@ def test_bucket_policy(template: cdk.assertions.Template) -> None:
 def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
     template = make_template(app, certificate_arn=certificate_arn)
 
-    distribution_config: dict[str, Any] = {
-        "Aliases": [
+    aliases = (
+        [
             "robert.pringles",
             "www.robert.pringles",
-        ],
-        "DefaultCacheBehavior": {
-            "ViewerProtocolPolicy": (
-                "redirect-to-https" if certificate_arn else "allow-all"
-            ),
-        },
-        "DefaultRootObject": "index.html",
-    }
+        ]
+        if certificate_arn
+        else cdk.assertions.Match.absent()
+    )
 
-    distribution_config["ViewerCertificate"] = (
+    viewer_certificate = (
         {
             "AcmCertificateArn": certificate_arn,
             "MinimumProtocolVersion": "TLSv1.2_2021",
@@ -90,7 +84,14 @@ def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
     template.has_resource_properties(
         "AWS::CloudFront::Distribution",
         {
-            "DistributionConfig": distribution_config,
+            "DistributionConfig": {
+                "Aliases": aliases,
+                "DefaultCacheBehavior": {
+                    "ViewerProtocolPolicy": "redirect-to-https",
+                },
+                "DefaultRootObject": "index.html",
+                "ViewerCertificate": viewer_certificate,
+            },
         },
     )
 
