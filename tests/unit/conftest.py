@@ -21,8 +21,11 @@ def get_parameter(client: Mock) -> Mock:
     func = Mock(side_effect=Exception())
     client.get_parameter = func
 
+    class ParameterNotFound(Exception):
+        pass
+
     exceptions = Mock()
-    exceptions.ParameterNotFound = Exception
+    exceptions.ParameterNotFound = ParameterNotFound
     client.exceptions = exceptions
 
     return func
