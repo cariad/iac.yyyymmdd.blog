@@ -4,6 +4,8 @@ import aws_cdk as cdk
 import aws_cdk.aws_iam as iam
 from constructs import Construct
 
+from iac import stages
+
 
 class Pipeline(cdk.Stack):
     """
@@ -12,6 +14,8 @@ class Pipeline(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
+        domain_name: Domain name.
+        env: Environment. Must have an explicit account.
         pipeline_name: Pipeline name.
     """
 
@@ -19,10 +23,12 @@ class Pipeline(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
+        domain_name: str,
+        env: cdk.Environment,
         pipeline_name: str | None = None,
         **kwargs: Any,
     ) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id, env=env, **kwargs)
 
         pipeline = cdk.pipelines.CodePipeline(
             self,
@@ -41,6 +47,18 @@ class Pipeline(cdk.Stack):
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
+        )
+
+        if not env.account:
+            raise ValueError("Pipeline `env` must have an explicit account")
+
+        pipeline.add_stage(
+            stages.GlobalBootstrap(
+                self,
+                f"{construct_id}-GlobalBootstrap",
+                account=env.account,
+                domain_name=domain_name,
+            )
         )
 
         pipeline.build_pipeline()
