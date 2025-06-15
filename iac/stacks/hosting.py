@@ -12,13 +12,15 @@ class Hosting(cdk.Stack):
     """
     Static site hosting.
 
+    The given domain name will be applied only when a certificate is also
+    provided. Without a certificate, a random CloudFront domain name will be
+    used regardless of any explicitly requested domain name.
+
     Args:
         scope: Scope.
         construct_id: Construct ID.
-        domain_name: Domain name. The domain name will be applied to the
-            distribution only if the optional certificate ARN is provided.
-        certificate_arn: ARN of the TLS/HTTP certificate. The domain name will
-            be ignored if this is omitted.
+        domain_name: Domain name.
+        certificate_arn: ARN of the TLS/HTTP certificate.
     """
 
     def __init__(
