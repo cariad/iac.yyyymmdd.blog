@@ -6,7 +6,12 @@ from iac import environments
 
 
 def test_account_id(client: Mock, session: Mock) -> None:
-    get_caller_identity = Mock(return_value={"Account": "000000000"})
+    get_caller_identity = Mock(
+        return_value={
+            "Account": "000000000",
+        },
+    )
+
     client.get_caller_identity = get_caller_identity
     account_id = environments.account_id(session)
     assert account_id == "000000000"
