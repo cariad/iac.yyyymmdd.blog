@@ -11,4 +11,56 @@ def template(app: cdk.App) -> cdk.assertions.Template:
 
 
 def test_bucket(template: cdk.assertions.Template) -> None:
-    template.has_resource_properties("AWS::S3::Bucket", {})
+    template.has_resource(
+        "AWS::S3::Bucket",
+        {
+            "UpdateReplacePolicy": "Delete",
+            "DeletionPolicy": "Delete",
+        },
+    )
+
+
+def test_bucket_policy(template: cdk.assertions.Template) -> None:
+    template.has_resource_properties(
+        "AWS::S3::BucketPolicy",
+        {
+            "PolicyDocument": {
+                "Statement": [
+                    {
+                        "Action": "s3:GetObject",
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "cloudfront.amazonaws.com",
+                        },
+                    }
+                ],
+            },
+        },
+    )
+
+
+def test_distribution(template: cdk.assertions.Template) -> None:
+    template.has_resource_properties(
+        "AWS::CloudFront::Distribution",
+        {
+            "DistributionConfig": {
+                "DefaultCacheBehavior": {
+                    "ViewerProtocolPolicy": "redirect-to-https",
+                },
+                "DefaultRootObject": "index.html",
+            }
+        },
+    )
+
+
+def test_origin_access_control(template: cdk.assertions.Template) -> None:
+    template.has_resource_properties(
+        "AWS::CloudFront::OriginAccessControl",
+        {
+            "OriginAccessControlConfig": {
+                "OriginAccessControlOriginType": "s3",
+                "SigningBehavior": "always",
+                "SigningProtocol": "sigv4",
+            },
+        },
+    )
