@@ -15,8 +15,10 @@ class Hosting(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
-        domain_name: Domain name.
-        certificate_arn: ARN of the TLS/HTTP certificate.
+        domain_name: Domain name. The domain name will be applied to the
+            distribution only if the optional certificate ARN is provided.
+        certificate_arn: ARN of the TLS/HTTP certificate. The domain name will
+            be ignored if this is omitted.
     """
 
     def __init__(
@@ -41,11 +43,7 @@ class Hosting(cdk.Stack):
 
         default_distribution_behavior = cf.BehaviorOptions(
             origin=distribution_origin,
-            viewer_protocol_policy=(
-                cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
-                if certificate_arn
-                else cf.ViewerProtocolPolicy.ALLOW_ALL
-            ),
+            viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         )
 
         certificate = (
@@ -58,14 +56,21 @@ class Hosting(cdk.Stack):
             else None
         )
 
+        # CloudFront won't allow domain aliases without a certificate.
+        domain_names = (
+            [
+                domain_name,
+                f"www.{domain_name}",
+            ]
+            if certificate_arn
+            else None
+        )
+
         cf.Distribution(
             self,
             f"{construct_id}-Distribution",
             certificate=certificate,
             default_behavior=default_distribution_behavior,
             default_root_object="index.html",
-            domain_names=[
-                domain_name,
-                f"www.{domain_name}",
-            ],
+            domain_names=domain_names,
         )

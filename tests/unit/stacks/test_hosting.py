@@ -65,17 +65,20 @@ def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
     template = make_template(app, certificate_arn=certificate_arn)
 
     distribution_config: dict[str, Any] = {
-        "Aliases": [
-            "robert.pringles",
-            "www.robert.pringles",
-        ],
         "DefaultCacheBehavior": {
-            "ViewerProtocolPolicy": (
-                "redirect-to-https" if certificate_arn else "allow-all"
-            ),
+            "ViewerProtocolPolicy": "redirect-to-https",
         },
         "DefaultRootObject": "index.html",
     }
+
+    distribution_config["Aliases"] = (
+        [
+            "robert.pringles",
+            "www.robert.pringles",
+        ]
+        if certificate_arn
+        else cdk.assertions.Match.absent()
+    )
 
     distribution_config["ViewerCertificate"] = (
         {
