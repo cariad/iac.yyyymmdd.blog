@@ -39,6 +39,6 @@ class GlobalBootstrap(cdk.Stage):
 
         stacks.Certificate(
             self,
-            f"{construct_id}CertificateStack",
+            "Certificate",
             domain_name=domain_name,
         )

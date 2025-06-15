@@ -55,7 +55,7 @@ class Pipeline(cdk.Stack):
         pipeline.add_stage(
             stages.GlobalBootstrap(
                 self,
-                "GlobalBootstrap",
+                f"{construct_id}GlobalBootstrap",
                 account=env.account,
                 domain_name=domain_name,
             )
