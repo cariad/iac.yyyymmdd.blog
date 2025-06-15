@@ -1,6 +1,7 @@
 from typing import Any
 
 import aws_cdk as cdk
+import aws_cdk.aws_iam as iam
 from constructs import Construct
 
 from iac import stages
@@ -58,4 +59,17 @@ class Pipeline(cdk.Stack):
                 account=env.account,
                 domain_name=domain_name,
             )
+        )
+
+        pipeline.build_pipeline()
+
+        pipeline.synth_project.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "route53:ListHostedZonesByName",
+                ],
+                resources=[
+                    "*",
+                ],
+            ),
         )
