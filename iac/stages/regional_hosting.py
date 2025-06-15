@@ -13,17 +13,16 @@ class RegionalHosting(cdk.Stage):
     Args:
         scope: Scope.
         construct_id: Construct ID.
-        certificate_parameter_name: Name of the Systems Manager Parameter that
-            the ARN of the TLS/HTTPS certificate is recorded in.
         domain_name: Domain name.
+        certificate_arn: ARN of the TLS/HTTPS certificate.
     """
 
     def __init__(
         self,
         scope: Construct,
         construct_id: str,
-        certificate_parameter_name: str,
         domain_name: str,
+        certificate_arn: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -31,6 +30,6 @@ class RegionalHosting(cdk.Stage):
         stacks.Hosting(
             self,
             "HostingStack",
-            certificate_parameter_name=certificate_parameter_name,
+            certificate_arn=certificate_arn,
             domain_name=domain_name,
         )

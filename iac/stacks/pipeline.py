@@ -18,6 +18,7 @@ class Pipeline(cdk.Stack):
             record the certificate ARN in.
         domain_name: Domain name.
         env: Environment. Must have an explicit account.
+        certificate_arn: ARN of the TLS/HTTPS certificate.
         pipeline_name: Pipeline name.
     """
 
@@ -28,6 +29,7 @@ class Pipeline(cdk.Stack):
         certificate_parameter_name: str,
         domain_name: str,
         env: cdk.Environment,
+        certificate_arn: str | None = None,
         pipeline_name: str | None = None,
         **kwargs: Any,
     ) -> None:
@@ -68,7 +70,7 @@ class Pipeline(cdk.Stack):
         regional_hosting_stage = stages.RegionalHosting(
             self,
             f"{construct_id}-RegionalHosting",
-            certificate_parameter_name=certificate_parameter_name,
+            certificate_arn=certificate_arn,
             domain_name=domain_name,
         )
 

@@ -5,7 +5,6 @@ import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_cloudfront as cf
 import aws_cdk.aws_cloudfront_origins as cfo
 import aws_cdk.aws_s3 as s3
-import aws_cdk.aws_ssm as ssm
 from constructs import Construct
 
 
@@ -16,17 +15,16 @@ class Hosting(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
-        certificate_parameter_name: Name of the Systems Manager Parameter that
-            the ARN of the TLS/HTTPS certificate is recorded in.
         domain_name: Domain name.
+        certificate_arn: ARN of the TLS/HTTP certificate.
     """
 
     def __init__(
         self,
         scope: Construct,
         construct_id: str,
-        certificate_parameter_name: str,
         domain_name: str,
+        certificate_arn: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -43,18 +41,21 @@ class Hosting(cdk.Stack):
 
         default_distribution_behavior = cf.BehaviorOptions(
             origin=distribution_origin,
-            viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            viewer_protocol_policy=(
+                cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+                if certificate_arn
+                else cf.ViewerProtocolPolicy.ALLOW_ALL
+            ),
         )
 
-        certificate_arn = ssm.StringParameter.value_for_string_parameter(
-            self,
-            certificate_parameter_name,
-        )
-
-        certificate = acm.Certificate.from_certificate_arn(
-            self,
-            f"{construct_id}-Certificate",
-            certificate_arn,
+        certificate = (
+            acm.Certificate.from_certificate_arn(
+                self,
+                f"{construct_id}-Certificate",
+                certificate_arn,
+            )
+            if certificate_arn
+            else None
         )
 
         cf.Distribution(
