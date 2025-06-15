@@ -30,13 +30,13 @@ class Certificate(cdk.Stack):
 
         hosted_zone = route53.HostedZone.from_lookup(
             self,
-            f"{construct_id}HostedZone",
+            f"{construct_id}-HostedZone",
             domain_name=domain_name,
         )
 
         acm.Certificate(
             self,
-            f"{construct_id}Certificate",
+            f"{construct_id}-Certificate",
             domain_name=domain_name,
             subject_alternative_names=[
                 f"www.{domain_name}",

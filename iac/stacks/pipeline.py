@@ -32,7 +32,7 @@ class Pipeline(cdk.Stack):
 
         pipeline = cdk.pipelines.CodePipeline(
             self,
-            f"{construct_id}Pipeline",
+            f"{construct_id}-Pipeline",
             pipeline_name=pipeline_name,
             synth=cdk.pipelines.ShellStep(
                 "Synthesise",
@@ -55,7 +55,7 @@ class Pipeline(cdk.Stack):
         pipeline.add_stage(
             stages.GlobalBootstrap(
                 self,
-                f"{construct_id}GlobalBootstrap",
+                f"{construct_id}-GlobalBootstrap",
                 account=env.account,
                 domain_name=domain_name,
             )
