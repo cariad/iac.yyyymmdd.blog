@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import aws_cdk as cdk
 from pytest import fixture
 
@@ -6,12 +8,17 @@ from tests import testing
 
 
 @fixture
-def template(app: cdk.App) -> cdk.assertions.Template:
+def template(
+    app: cdk.App,
+    session: Mock,
+    get_parameter: Mock,
+) -> cdk.assertions.Template:
     stack = stacks.Pipeline(
         app,
         "Pipeline",
         domain_name="robert.pringles",
         env=testing.test_environment(),
+        session=session,
     )
 
     return cdk.assertions.Template.from_stack(stack)
