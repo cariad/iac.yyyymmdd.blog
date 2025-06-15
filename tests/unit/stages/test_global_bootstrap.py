@@ -19,4 +19,4 @@ def test_child_count(stage: stages.GlobalBootstrap) -> None:
 
 
 def test_has_certificate(stage: stages.GlobalBootstrap) -> None:
-    assert stage.node.find_child("GlobalBootstrapCertificateStack")
+    assert stage.node.find_child("GlobalBootstrap-Certificate")

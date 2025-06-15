@@ -10,6 +10,9 @@ class GlobalBootstrap(cdk.Stage):
     """
     Global bootstrap.
 
+    Regardless of any specified environment, this stack will always be deploy
+    to us-east-1.
+
     Args:
         scope: Scope.
         construct_id: Construct ID.
@@ -39,6 +42,6 @@ class GlobalBootstrap(cdk.Stage):
 
         stacks.Certificate(
             self,
-            "Certificate",
+            f"{construct_id}-Certificate",
             domain_name=domain_name,
         )
