@@ -34,7 +34,7 @@ def test_pipeline(template: cdk.assertions.Template) -> None:
                 },
                 {"Name": "Build"},
                 {"Name": "UpdatePipeline"},
-                {"Name": "GlobalBootstrap"},
+                {"Name": "Pipeline-GlobalBootstrap"},
             ],
         },
     )
