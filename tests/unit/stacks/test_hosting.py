@@ -1,13 +1,27 @@
+from typing import Any
+
 import aws_cdk as cdk
-from pytest import fixture
+from pytest import fixture, mark
 
 from iac import stacks
 
 
+def make_template(
+    app: cdk.App,
+    certificate_arn: str | None = None,
+) -> cdk.assertions.Template:
+    stack = stacks.Hosting(
+        app,
+        "Hosting",
+        certificate_arn=certificate_arn,
+    )
+
+    return cdk.assertions.Template.from_stack(stack)
+
+
 @fixture
 def template(app: cdk.App) -> cdk.assertions.Template:
-    stack = stacks.Hosting(app, "Hosting")
-    return cdk.assertions.Template.from_stack(stack)
+    return make_template(app)
 
 
 def test_bucket(template: cdk.assertions.Template) -> None:
@@ -39,16 +53,39 @@ def test_bucket_policy(template: cdk.assertions.Template) -> None:
     )
 
 
-def test_distribution(template: cdk.assertions.Template) -> None:
+@mark.parametrize(
+    "certificate_arn",
+    [
+        None,
+        "arn:aws:ssm:us-east-1:000000000000:certificate/foo",
+    ],
+)
+def test_distributione(app: cdk.App, certificate_arn: str | None) -> None:
+    template = make_template(app, certificate_arn=certificate_arn)
+
+    distribution_config: dict[str, Any] = {
+        "DefaultCacheBehavior": {
+            "ViewerProtocolPolicy": (
+                "redirect-to-https" if certificate_arn else "allow-all"
+            ),
+        },
+        "DefaultRootObject": "index.html",
+    }
+
+    distribution_config["ViewerCertificate"] = (
+        {
+            "AcmCertificateArn": certificate_arn,
+            "MinimumProtocolVersion": "TLSv1.2_2021",
+            "SslSupportMethod": "sni-only",
+        }
+        if certificate_arn
+        else cdk.assertions.Match.absent()
+    )
+
     template.has_resource_properties(
         "AWS::CloudFront::Distribution",
         {
-            "DistributionConfig": {
-                "DefaultCacheBehavior": {
-                    "ViewerProtocolPolicy": "redirect-to-https",
-                },
-                "DefaultRootObject": "index.html",
-            }
+            "DistributionConfig": distribution_config,
         },
     )
 
