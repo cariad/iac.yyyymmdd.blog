@@ -6,7 +6,12 @@ from iac import stages
 
 @fixture
 def stage(app: cdk.App) -> stages.RegionalHosting:
-    return stages.RegionalHosting(app, "RegionalHosting")
+    return stages.RegionalHosting(
+        app,
+        "RegionalHosting",
+        certificate_parameter_name="/pringles/certificate",
+        domain_name="robert.pringles",
+    )
 
 
 def test_child_count(stage: stages.RegionalHosting) -> None:

@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import aws_cdk as cdk
 from pytest import fixture
 
@@ -6,7 +8,13 @@ from iac import stacks
 
 @fixture
 def template(app: cdk.App) -> cdk.assertions.Template:
-    stack = stacks.Hosting(app, "Hosting")
+    stack = stacks.Hosting(
+        app,
+        "Hosting",
+        certificate_parameter_name="/pringles/certificate",
+        domain_name="robert.pringles",
+    )
+
     return cdk.assertions.Template.from_stack(stack)
 
 

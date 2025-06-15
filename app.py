@@ -11,6 +11,7 @@ app = cdk.App()
 stacks.Pipeline(
     app,
     "yyyymmddblog",
+    certificate_parameter_name="/yyyymmddblog/certificate",
     domain_name="yyyymmdd.blog",
     env=environments.local_environment(account),
     pipeline_name="yyyymmddblog",

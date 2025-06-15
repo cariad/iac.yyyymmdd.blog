@@ -14,6 +14,8 @@ class Pipeline(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
+        certificate_parameter_name: Name of the Systems Manager Parameter to
+            record the certificate ARN in.
         domain_name: Domain name.
         env: Environment. Must have an explicit account.
         pipeline_name: Pipeline name.
@@ -23,6 +25,7 @@ class Pipeline(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
+        certificate_parameter_name: str,
         domain_name: str,
         env: cdk.Environment,
         pipeline_name: str | None = None,
@@ -43,7 +46,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "main",
+                    "share-certificate",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
@@ -52,18 +55,24 @@ class Pipeline(cdk.Stack):
         if not env.account:
             raise ValueError("Pipeline `env` must have an explicit account")
 
-        pipeline.add_stage(
-            stages.GlobalBootstrap(
-                self,
-                f"{construct_id}-GlobalBootstrap",
-                account=env.account,
-                domain_name=domain_name,
-            )
+        bootstrap_stage = stages.GlobalBootstrap(
+            self,
+            f"{construct_id}-GlobalBootstrap",
+            account=env.account,
+            certificate_parameter_name=certificate_parameter_name,
+            domain_name=domain_name,
         )
 
-        pipeline.add_stage(
-            stages.RegionalHosting(self, f"{construct_id}-RegionalHosting")
+        pipeline.add_stage(bootstrap_stage)
+
+        regional_hosting_stage = stages.RegionalHosting(
+            self,
+            f"{construct_id}-RegionalHosting",
+            certificate_parameter_name=certificate_parameter_name,
+            domain_name=domain_name,
         )
+
+        pipeline.add_stage(regional_hosting_stage)
 
         pipeline.build_pipeline()
 
