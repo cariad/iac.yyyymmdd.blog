@@ -10,6 +10,10 @@ class RegionalHosting(cdk.Stage):
     """
     Regional hosting.
 
+    The given domain name will be applied only when a certificate is also
+    provided. Without a certificate, a random CloudFront domain name will be
+    used regardless of any explicitly requested domain name.
+
     Args:
         scope: Scope.
         construct_id: Construct ID.
