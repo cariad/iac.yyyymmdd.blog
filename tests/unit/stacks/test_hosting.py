@@ -14,6 +14,7 @@ def make_template(
         app,
         "Hosting",
         certificate_arn=certificate_arn,
+        domain_name="robert.pringles",
     )
 
     return cdk.assertions.Template.from_stack(stack)
@@ -64,6 +65,10 @@ def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
     template = make_template(app, certificate_arn=certificate_arn)
 
     distribution_config: dict[str, Any] = {
+        "Aliases": [
+            "robert.pringles",
+            "www.robert.pringles",
+        ],
         "DefaultCacheBehavior": {
             "ViewerProtocolPolicy": (
                 "redirect-to-https" if certificate_arn else "allow-all"
