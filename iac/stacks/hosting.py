@@ -12,6 +12,10 @@ class Hosting(cdk.Stack):
     """
     Static site hosting.
 
+    The given domain name will be applied only when a certificate is also
+    provided. Without a certificate, a random CloudFront domain name will be
+    used regardless of any explicitly requested domain name.
+
     Args:
         scope: Scope.
         construct_id: Construct ID.
@@ -41,11 +45,7 @@ class Hosting(cdk.Stack):
 
         default_distribution_behavior = cf.BehaviorOptions(
             origin=distribution_origin,
-            viewer_protocol_policy=(
-                cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
-                if certificate_arn
-                else cf.ViewerProtocolPolicy.ALLOW_ALL
-            ),
+            viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         )
 
         certificate = (
@@ -58,14 +58,21 @@ class Hosting(cdk.Stack):
             else None
         )
 
+        # CloudFront won't allow domain aliases without a certificate.
+        domain_names = (
+            [
+                domain_name,
+                f"www.{domain_name}",
+            ]
+            if certificate_arn
+            else None
+        )
+
         cf.Distribution(
             self,
             f"{construct_id}-Distribution",
             certificate=certificate,
             default_behavior=default_distribution_behavior,
             default_root_object="index.html",
-            domain_names=[
-                domain_name,
-                f"www.{domain_name}",
-            ],
+            domain_names=domain_names,
         )
