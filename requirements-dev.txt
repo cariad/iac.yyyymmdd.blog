@@ -1,3 +1,4 @@
 black
+boto3-stubs[sts]
 flake8
 pytest==6.2.5
