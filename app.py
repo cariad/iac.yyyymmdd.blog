@@ -14,6 +14,7 @@ stacks.Pipeline(
     domain_name="yyyymmdd.blog",
     env=environments.local_environment(account),
     pipeline_name="yyyymmddblog",
+    session=session,
 )
 
 app.synth()
