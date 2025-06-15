@@ -53,7 +53,15 @@ def test_synthesis_policy(template: cdk.assertions.Template) -> None:
                             "Effect": "Allow",
                             "Resource": "*",
                         },
-                    ]
+                        {
+                            "Action": "ssm:GetParameter",
+                            "Effect": "Allow",
+                            "Resource": (
+                                "arn:aws:ssm:us-east-1:000000000:parameter"
+                                "/Pipeline/certificate"
+                            ),
+                        },
+                    ],
                 ),
             },
         },

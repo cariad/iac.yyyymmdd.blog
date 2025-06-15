@@ -35,6 +35,8 @@ class Pipeline(cdk.Stack):
     ) -> None:
         super().__init__(scope, construct_id, env=env, **kwargs)
 
+        certificate_parameter_name = f"/{self.node.id}/certificate"
+
         pipeline = cdk.pipelines.CodePipeline(
             self,
             f"{construct_id}-Pipeline",
