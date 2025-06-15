@@ -30,6 +30,8 @@ class Pipeline(cdk.Stack):
     ) -> None:
         super().__init__(scope, construct_id, env=env, **kwargs)
 
+        certificate_parameter_name = f"/{self.node.id}/certificate"
+
         pipeline = cdk.pipelines.CodePipeline(
             self,
             f"{construct_id}-Pipeline",
@@ -74,6 +76,18 @@ class Pipeline(cdk.Stack):
                 ],
                 resources=[
                     "*",
+                ],
+            ),
+        )
+
+        pipeline.synth_project.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "ssm:GetParameter",
+                ],
+                resources=[
+                    f"arn:aws:ssm:us-east-1:{self.account}:parameter"
+                    + certificate_parameter_name,
                 ],
             ),
         )
