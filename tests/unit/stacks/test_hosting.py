@@ -1,5 +1,3 @@
-from typing import Any
-
 import aws_cdk as cdk
 from pytest import fixture, mark
 
