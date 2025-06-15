@@ -14,7 +14,7 @@ Amazon Web Services infrastructure as code for [yyyymmdd.blog](https://www.yyyym
     cdk deploy yyyymmddblog
     ```
 
-    Note that HTTPS will not be enabled during this initial deployment because the certificate won't have been available during synthesis. To enable HTTPS, perform a second deployment by executing the deployed pipeline.
+    Note that your custom domain name will not be enabled during this initial deployment because its certificate won't be available during synthesis. After the initial deployment, the site will be available only on random CloudFront distribution domain. To enable your custom domain, perform a second deployment by executing the deployed pipeline.
 
 ## Testing
 
