@@ -14,8 +14,6 @@ class Pipeline(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
-        certificate_parameter_name: Name of the Systems Manager Parameter to
-            record the certificate ARN in.
         domain_name: Domain name.
         env: Environment. Must have an explicit account.
         certificate_arn: ARN of the TLS/HTTPS certificate.
@@ -26,7 +24,6 @@ class Pipeline(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
-        certificate_parameter_name: str,
         domain_name: str,
         env: cdk.Environment,
         certificate_arn: str | None = None,

@@ -24,7 +24,6 @@ stacks.Pipeline(
     app,
     PROJECT_NAME,
     certificate_arn=certificate_arn,
-    certificate_parameter_name=certificate_parameter_name,
     domain_name="yyyymmdd.blog",
     env=environments.local_environment(account),
     pipeline_name=PROJECT_NAME,
