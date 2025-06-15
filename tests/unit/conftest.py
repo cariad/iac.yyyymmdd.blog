@@ -17,5 +17,17 @@ def client(session: Mock) -> Mock:
 
 
 @fixture
+def get_parameter(client: Mock) -> Mock:
+    func = Mock(side_effect=Exception())
+    client.get_parameter = func
+
+    exceptions = Mock()
+    exceptions.ParameterNotFound = Exception
+    client.exceptions = exceptions
+
+    return func
+
+
+@fixture
 def session() -> Mock:
     return Mock()

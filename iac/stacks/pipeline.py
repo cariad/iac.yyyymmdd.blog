@@ -2,6 +2,7 @@ from typing import Any
 
 import aws_cdk as cdk
 import aws_cdk.aws_iam as iam
+from boto3 import Session
 from constructs import Construct
 
 from iac import stages
@@ -16,6 +17,7 @@ class Pipeline(cdk.Stack):
         construct_id: Construct ID.
         domain_name: Domain name.
         env: Environment. Must have an explicit account.
+        session: Boto3 session.
         pipeline_name: Pipeline name.
     """
 
@@ -25,12 +27,25 @@ class Pipeline(cdk.Stack):
         construct_id: str,
         domain_name: str,
         env: cdk.Environment,
+        session: Session,
         pipeline_name: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, env=env, **kwargs)
 
+        certificate_arn: str | None = None
         certificate_parameter_name = f"/{self.node.id}/certificate"
+
+        # The region is intentionally us-east-1 because the certificate is
+        # always deployed there.
+        ssm = session.client("ssm", region_name="us-east-1")
+
+        try:
+            parameter = ssm.get_parameter(Name=certificate_parameter_name)
+            certificate_arn = parameter["Parameter"].get("Value")
+        except ssm.exceptions.ParameterNotFound:
+            # No worries. It'll get deployed later.
+            pass
 
         pipeline = cdk.pipelines.CodePipeline(
             self,
@@ -67,6 +82,7 @@ class Pipeline(cdk.Stack):
             stages.RegionalHosting(
                 self,
                 f"{construct_id}-RegionalHosting",
+                certificate_arn=certificate_arn,
                 domain_name=domain_name,
             )
         )
