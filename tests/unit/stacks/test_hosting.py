@@ -60,7 +60,7 @@ def test_bucket_policy(template: cdk.assertions.Template) -> None:
         "arn:aws:ssm:us-east-1:000000000000:certificate/foo",
     ],
 )
-def test_distributione(app: cdk.App, certificate_arn: str | None) -> None:
+def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
     template = make_template(app, certificate_arn=certificate_arn)
 
     distribution_config: dict[str, Any] = {
