@@ -10,8 +10,8 @@ class GlobalBootstrap(cdk.Stage):
     """
     Global bootstrap.
 
-    Regardless of any specified environment, this stack will always be deploy to
-    us-east-1.
+    Regardless of any specified environment, this stack will always be deploy
+    to us-east-1.
 
     Args:
         scope: Scope.
