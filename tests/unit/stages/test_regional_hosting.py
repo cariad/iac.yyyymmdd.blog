@@ -13,5 +13,5 @@ def test_child_count(stage: stages.RegionalHosting) -> None:
     assert len(stage.node.children) == 1
 
 
-def test_has_certificate(stage: stages.RegionalHosting) -> None:
+def test_has_hosting_stack(stage: stages.RegionalHosting) -> None:
     assert stage.node.find_child("HostingStack")
