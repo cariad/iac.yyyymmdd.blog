@@ -15,6 +15,7 @@ class Hosting(cdk.Stack):
     Args:
         scope: Scope.
         construct_id: Construct ID.
+        domain_name: Domain name.
         certificate_arn: ARN of the TLS/HTTP certificate.
     """
 
@@ -22,6 +23,7 @@ class Hosting(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
+        domain_name: str,
         certificate_arn: str | None = None,
         **kwargs: Any,
     ) -> None:
@@ -62,4 +64,8 @@ class Hosting(cdk.Stack):
             certificate=certificate,
             default_behavior=default_distribution_behavior,
             default_root_object="index.html",
+            domain_names=[
+                domain_name,
+                f"www.{domain_name}",
+            ],
         )

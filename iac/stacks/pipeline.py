@@ -64,7 +64,11 @@ class Pipeline(cdk.Stack):
         )
 
         pipeline.add_stage(
-            stages.RegionalHosting(self, f"{construct_id}-RegionalHosting")
+            stages.RegionalHosting(
+                self,
+                f"{construct_id}-RegionalHosting",
+                domain_name=domain_name,
+            )
         )
 
         pipeline.build_pipeline()
