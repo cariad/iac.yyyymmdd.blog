@@ -1,6 +1,7 @@
 from typing import Any
 
 import aws_cdk as cdk
+import aws_cdk.aws_iam as iam
 from constructs import Construct
 
 
@@ -23,7 +24,7 @@ class Pipeline(cdk.Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        cdk.pipelines.CodePipeline(
+        pipeline = cdk.pipelines.CodePipeline(
             self,
             f"{construct_id}Pipeline",
             pipeline_name=pipeline_name,
@@ -39,5 +40,18 @@ class Pipeline(cdk.Stack):
                     "main",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
+            ),
+        )
+
+        pipeline.build_pipeline()
+
+        pipeline.synth_project.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "route53:ListHostedZonesByName",
+                ],
+                resources=[
+                    "*",
+                ],
             ),
         )
