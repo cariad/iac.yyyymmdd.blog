@@ -49,7 +49,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "dns",
+                    "main",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
