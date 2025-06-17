@@ -88,12 +88,12 @@ class Hosting(cdk.Stack):
             domain_name=domain_name,
         )
 
-        # route53.ARecord(
-        #     self,
-        #     f"{construct_id}-RootARecord",
-        #     target=record_target,
-        #     zone=hosted_zone,
-        # )
+        route53.ARecord(
+            self,
+            f"{construct_id}-RootARecord",
+            target=record_target,
+            zone=hosted_zone,
+        )
 
         route53.ARecord(
             self,
