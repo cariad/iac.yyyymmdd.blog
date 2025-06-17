@@ -1,7 +1,6 @@
 from typing import Any
 
 import aws_cdk as cdk
-from boto3 import Session
 from constructs import Construct
 
 from iac import stacks
@@ -19,6 +18,7 @@ class RegionalHosting(cdk.Stage):
         scope: Scope.
         construct_id: Construct ID.
         domain_name: Domain name.
+        certificate_arn: ARN of the TLS/HTTPS certificate.
     """
 
     def __init__(
