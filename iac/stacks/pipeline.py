@@ -78,6 +78,7 @@ class Pipeline(cdk.Stack):
         pipeline.synth_project.add_to_role_policy(
             iam.PolicyStatement(
                 actions=[
+                    "acm:ListCertificates",
                     "route53:ListHostedZonesByName",
                 ],
                 resources=[
@@ -85,15 +86,3 @@ class Pipeline(cdk.Stack):
                 ],
             ),
         )
-
-        # pipeline.synth_project.add_to_role_policy(
-        #     iam.PolicyStatement(
-        #         actions=[
-        #             "ssm:GetParameter",
-        #         ],
-        #         resources=[
-        #             f"arn:aws:ssm:us-east-1:{self.account}:parameter"
-        #             + certificate_parameter_name,
-        #         ],
-        #     ),
-        # )
