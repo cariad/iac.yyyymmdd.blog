@@ -88,32 +88,38 @@ class Hosting(cdk.Stack):
             domain_name=domain_name,
         )
 
-        route53.ARecord(
-            self,
-            f"{construct_id}-RootARecord",
-            target=record_target,
-            zone=hosted_zone,
-        )
+        self._add_dns(hosted_zone, record_target)
+        self._add_dns(hosted_zone, record_target, subdomain="www")
+
+    def _add_dns(
+        self,
+        hosted_zone: route53.IHostedZone,
+        target: route53.RecordTarget,
+        subdomain: str | None = None,
+    ) -> None:
+        """
+        Adds IPv4 and IPv6 domain records for a given target.
+
+        Args:
+            hosted_zone: Hosted Zone.
+            target: Record target.
+            subdomain: Optional subdomain.
+        """
+
+        name = subdomain.capitalize() if subdomain else "Root"
 
         route53.ARecord(
             self,
-            f"{construct_id}-WwwARecord",
-            record_name="www",
-            target=record_target,
+            f"{self.node.id}-{name}ARecord",
+            record_name=subdomain,
+            target=target,
             zone=hosted_zone,
         )
 
         route53.AaaaRecord(
             self,
-            f"{construct_id}-RootAaaaRecord",
-            target=record_target,
-            zone=hosted_zone,
-        )
-
-        route53.AaaaRecord(
-            self,
-            f"{construct_id}-WwwAaaaRecord",
-            record_name="www",
-            target=record_target,
+            f"{self.node.id}-{name}AaaaRecord",
+            record_name=subdomain,
+            target=target,
             zone=hosted_zone,
         )
