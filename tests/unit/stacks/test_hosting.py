@@ -89,6 +89,9 @@ def test_distribution(app: cdk.App, certificate_arn: str | None) -> None:
             "DistributionConfig": {
                 "Aliases": aliases,
                 "DefaultCacheBehavior": {
+                    "FunctionAssociations": [
+                        {"EventType": "viewer-request"},
+                    ],
                     "ViewerProtocolPolicy": "redirect-to-https",
                 },
                 "DefaultRootObject": "index.html",
