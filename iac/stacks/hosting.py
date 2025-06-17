@@ -4,6 +4,8 @@ import aws_cdk as cdk
 import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_cloudfront as cf
 import aws_cdk.aws_cloudfront_origins as cfo
+import aws_cdk.aws_route53 as route53
+import aws_cdk.aws_route53_targets as route53_targets
 import aws_cdk.aws_s3 as s3
 from constructs import Construct
 
@@ -68,11 +70,26 @@ class Hosting(cdk.Stack):
             else None
         )
 
-        cf.Distribution(
+        distribution = cf.Distribution(
             self,
             f"{construct_id}-Distribution",
             certificate=certificate,
             default_behavior=default_distribution_behavior,
             default_root_object="index.html",
             domain_names=domain_names,
+        )
+
+        distribution_target = route53_targets.CloudFrontTarget(distribution)
+
+        hosted_zone = route53.HostedZone.from_lookup(
+            self,
+            f"{construct_id}-HostedZone",
+            domain_name=domain_name,
+        )
+
+        route53.ARecord(
+            self,
+            f"{construct_id}-AliasRecord",
+            target=route53.RecordTarget.from_alias(distribution_target),
+            zone=hosted_zone,
         )

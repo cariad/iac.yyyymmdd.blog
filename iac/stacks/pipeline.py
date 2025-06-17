@@ -60,7 +60,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "main",
+                    "dns",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
@@ -84,6 +84,7 @@ class Pipeline(cdk.Stack):
                 f"{construct_id}-RegionalHosting",
                 certificate_arn=certificate_arn,
                 domain_name=domain_name,
+                env=env,
             )
         )
 
