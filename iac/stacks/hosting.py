@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 import aws_cdk as cdk
@@ -46,6 +47,9 @@ class Hosting(cdk.Stack):
         )
 
         default_distribution_behavior = cf.BehaviorOptions(
+            function_associations=[
+                self._make_function(cf.FunctionEventType.VIEWER_REQUEST),
+            ],
             origin=distribution_origin,
             viewer_protocol_policy=cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         )
@@ -122,4 +126,38 @@ class Hosting(cdk.Stack):
             record_name=subdomain,
             target=target,
             zone=hosted_zone,
+        )
+
+    def _make_function(
+        self,
+        event_type: cf.FunctionEventType,
+    ) -> cf.FunctionAssociation:
+        """
+        Makes a CloudFront Function Association.
+
+        Args:
+            event_type: Type of event to make a handler for.
+
+        Returns:
+            CloudFront Function Association.
+        """
+
+        filename = event_type.value.lower() + ".js"
+        path = Path("iac") / "cloudfront_functions" / filename
+
+        code = cf.FunctionCode.from_file(
+            file_path=path.as_posix(),
+        )
+
+        function_name_for_id = event_type.value.replace("_", " ").title
+
+        function = cf.Function(
+            self,
+            f"{self.node.id}-{function_name_for_id}Function",
+            code=code,
+        )
+
+        return cf.FunctionAssociation(
+            event_type=event_type,
+            function=function,
         )
