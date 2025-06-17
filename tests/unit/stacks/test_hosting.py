@@ -2,6 +2,7 @@ import aws_cdk as cdk
 from pytest import fixture, mark
 
 from iac import stacks
+from tests import testing
 
 
 def make_template(
@@ -13,6 +14,7 @@ def make_template(
         "Hosting",
         certificate_arn=certificate_arn,
         domain_name="robert.pringles",
+        env=testing.test_environment(),
     )
 
     return cdk.assertions.Template.from_stack(stack)
@@ -107,3 +109,15 @@ def test_origin_access_control(template: cdk.assertions.Template) -> None:
             },
         },
     )
+
+
+def test_record_sets(template: cdk.assertions.Template) -> None:
+    for record_name in ["robert.pringles.", "www.robert.pringles."]:
+        for record_type in ["A", "AAAA"]:
+            template.has_resource_properties(
+                "AWS::Route53::RecordSet",
+                {
+                    "Name": record_name,
+                    "Type": record_type,
+                },
+            )

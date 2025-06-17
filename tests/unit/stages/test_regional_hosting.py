@@ -2,6 +2,7 @@ import aws_cdk as cdk
 from pytest import fixture
 
 from iac import stages
+from tests import testing
 
 
 @fixture
@@ -10,6 +11,7 @@ def stage(app: cdk.App) -> stages.RegionalHosting:
         app,
         "RegionalHosting",
         domain_name="robert.pringles",
+        env=testing.test_environment(),
     )
 
 

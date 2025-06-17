@@ -73,6 +73,7 @@ class Pipeline(cdk.Stack):
                 f"{construct_id}-RegionalHosting",
                 certificate_arn=certificate_arn,
                 domain_name=domain_name,
+                env=env,
             )
         )
 
