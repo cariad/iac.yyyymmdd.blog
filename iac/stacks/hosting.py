@@ -90,14 +90,14 @@ class Hosting(cdk.Stack):
 
         # route53.ARecord(
         #     self,
-        #     f"{construct_id}-RootAliasRecord",
+        #     f"{construct_id}-RootRecord",
         #     target=record_target,
         #     zone=hosted_zone,
         # )
 
         route53.ARecord(
             self,
-            f"{construct_id}-WwwAliasRecord",
+            f"{construct_id}-WwwRecord",
             record_name="www",
             target=record_target,
             zone=hosted_zone,
