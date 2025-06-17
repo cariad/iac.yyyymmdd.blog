@@ -34,5 +34,5 @@ def test_try_get_certificate_arn(
 
     client.get_paginator = Mock(return_value=paginator)
 
-    arn = certificates.try_get_certificate_arn(session, "robert.pringles")
-    assert arn == "arn:robert.pringles"
+    arn = certificates.try_get_certificate_arn(session, domain_name)
+    assert arn == expect
