@@ -12,12 +12,16 @@ class Pipeline(cdk.Stack):
     """
     Build and deployment pipeline.
 
+    The given domain name will be applied only when a certificate is also
+    provided. Without a certificate, a random CloudFront domain name will be
+    used regardless of any explicitly requested domain name.
+
     Args:
         scope: Scope.
         construct_id: Construct ID.
         domain_name: Domain name.
         env: Environment. Must have an explicit account.
-        session: Boto3 session.
+        certificate_arn: ARN of the TLS/HTTPS certificate.
         pipeline_name: Pipeline name.
     """
 
@@ -27,7 +31,7 @@ class Pipeline(cdk.Stack):
         construct_id: str,
         domain_name: str,
         env: cdk.Environment,
-        session: Session,
+        certificate_arn: str | None = None,
         pipeline_name: str | None = None,
         **kwargs: Any,
     ) -> None:
@@ -46,7 +50,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "find-certificate",
+                    "main",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
@@ -68,8 +72,8 @@ class Pipeline(cdk.Stack):
             stages.RegionalHosting(
                 self,
                 f"{construct_id}-RegionalHosting",
+                certificate_arn=certificate_arn,
                 domain_name=domain_name,
-                session=session,
             )
         )
 

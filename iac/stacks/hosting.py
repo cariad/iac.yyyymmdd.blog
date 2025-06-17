@@ -5,10 +5,7 @@ import aws_cdk.aws_certificatemanager as acm
 import aws_cdk.aws_cloudfront as cf
 import aws_cdk.aws_cloudfront_origins as cfo
 import aws_cdk.aws_s3 as s3
-from boto3 import Session
 from constructs import Construct
-
-from iac.certificate import try_get_certificate_arn
 
 
 class Hosting(cdk.Stack):
@@ -23,6 +20,7 @@ class Hosting(cdk.Stack):
         scope: Scope.
         construct_id: Construct ID.
         domain_name: Domain name.
+        certificate_arn: ARN of the TLS/HTTPS certificate.
     """
 
     def __init__(
@@ -30,12 +28,10 @@ class Hosting(cdk.Stack):
         scope: Construct,
         construct_id: str,
         domain_name: str,
-        session: Session,
+        certificate_arn: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
-        certificate_arn = try_get_certificate_arn(session, domain_name)
 
         bucket = s3.Bucket(
             self,

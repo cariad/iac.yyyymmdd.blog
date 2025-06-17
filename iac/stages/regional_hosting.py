@@ -26,7 +26,7 @@ class RegionalHosting(cdk.Stage):
         scope: Construct,
         construct_id: str,
         domain_name: str,
-        session: Session,
+        certificate_arn: str | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -34,6 +34,6 @@ class RegionalHosting(cdk.Stage):
         stacks.Hosting(
             self,
             "HostingStack",
+            certificate_arn=certificate_arn,
             domain_name=domain_name,
-            session=session,
         )
