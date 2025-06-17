@@ -149,7 +149,7 @@ class Hosting(cdk.Stack):
             file_path=path.as_posix(),
         )
 
-        function_name_for_id = event_type.value.replace("_", " ").title
+        function_name_for_id = event_type.value.replace("_", " ").title()
 
         function = cf.Function(
             self,
