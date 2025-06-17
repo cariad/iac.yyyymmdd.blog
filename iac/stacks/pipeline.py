@@ -33,20 +33,6 @@ class Pipeline(cdk.Stack):
     ) -> None:
         super().__init__(scope, construct_id, env=env, **kwargs)
 
-        certificate_arn: str | None = None
-        certificate_parameter_name = f"/{self.node.id}/certificate"
-
-        # The region is intentionally us-east-1 because the certificate is
-        # always deployed there.
-        ssm = session.client("ssm", region_name="us-east-1")
-
-        try:
-            parameter = ssm.get_parameter(Name=certificate_parameter_name)
-            certificate_arn = parameter["Parameter"].get("Value")
-        except ssm.exceptions.ParameterNotFound:
-            # No worries. It'll get deployed later.
-            pass
-
         pipeline = cdk.pipelines.CodePipeline(
             self,
             f"{construct_id}-Pipeline",
@@ -60,7 +46,7 @@ class Pipeline(cdk.Stack):
                 ],
                 input=cdk.pipelines.CodePipelineSource.git_hub(
                     "cariad/iac.yyyymmdd.blog",
-                    "main",
+                    "find-certificate",
                     trigger=cdk.aws_codepipeline_actions.GitHubTrigger.NONE,
                 ),
             ),
@@ -82,8 +68,8 @@ class Pipeline(cdk.Stack):
             stages.RegionalHosting(
                 self,
                 f"{construct_id}-RegionalHosting",
-                certificate_arn=certificate_arn,
                 domain_name=domain_name,
+                session=session,
             )
         )
 
@@ -100,14 +86,14 @@ class Pipeline(cdk.Stack):
             ),
         )
 
-        pipeline.synth_project.add_to_role_policy(
-            iam.PolicyStatement(
-                actions=[
-                    "ssm:GetParameter",
-                ],
-                resources=[
-                    f"arn:aws:ssm:us-east-1:{self.account}:parameter"
-                    + certificate_parameter_name,
-                ],
-            ),
-        )
+        # pipeline.synth_project.add_to_role_policy(
+        #     iam.PolicyStatement(
+        #         actions=[
+        #             "ssm:GetParameter",
+        #         ],
+        #         resources=[
+        #             f"arn:aws:ssm:us-east-1:{self.account}:parameter"
+        #             + certificate_parameter_name,
+        #         ],
+        #     ),
+        # )
