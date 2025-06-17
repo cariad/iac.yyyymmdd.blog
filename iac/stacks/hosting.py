@@ -80,6 +80,7 @@ class Hosting(cdk.Stack):
         )
 
         distribution_target = route53_targets.CloudFrontTarget(distribution)
+        record_target = route53.RecordTarget.from_alias(distribution_target)
 
         hosted_zone = route53.HostedZone.from_lookup(
             self,
@@ -87,9 +88,17 @@ class Hosting(cdk.Stack):
             domain_name=domain_name,
         )
 
+        # route53.ARecord(
+        #     self,
+        #     f"{construct_id}-RootAliasRecord",
+        #     target=record_target,
+        #     zone=hosted_zone,
+        # )
+
         route53.ARecord(
             self,
-            f"{construct_id}-AliasRecord",
-            target=route53.RecordTarget.from_alias(distribution_target),
+            f"{construct_id}-WwwAliasRecord",
+            record_name="www",
+            target=record_target,
             zone=hosted_zone,
         )
