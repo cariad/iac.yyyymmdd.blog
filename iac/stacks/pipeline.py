@@ -2,7 +2,6 @@ from typing import Any
 
 import aws_cdk as cdk
 import aws_cdk.aws_iam as iam
-from boto3 import Session
 from constructs import Construct
 
 from iac import stages
